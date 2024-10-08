@@ -48,10 +48,10 @@ const styles = StyleSheet.create({
     container: {
         display: "flex",
         gap: 10,
-        margin: 10,
         height: 80,
         borderRadius: 10,
         padding: 8,
+        marginVertical: 5,
         backgroundColor: "#ffffff",
     },
 

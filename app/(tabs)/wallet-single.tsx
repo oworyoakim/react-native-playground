@@ -6,7 +6,8 @@ import {
     TouchableOpacity,
     FlatList,
     StatusBar,
-    Dimensions, SafeAreaView
+    Dimensions,
+    SafeAreaView
 } from "react-native";
 import {useState} from "react";
 import {uuid} from "expo-modules-core";
@@ -92,6 +93,11 @@ const transactions = [
 ];
 const screenWidth = Dimensions.get('window').width;
 
+const handleActionButtonPress = (action) => {
+    // action = deposit|liquidate|transfer
+    console.log(action);
+};
+
 export default function WalletSingle() {
     const [showBalance, setShowBalance] = useState(false);
     const currency = 'UGX';
@@ -103,67 +109,74 @@ export default function WalletSingle() {
             <View style={styles.container}>
                 <View style={styles.headerContainer}>
                     <View style={styles.headerContent}>
-                        <View style={styles.accountContainer}>
-                            <View style={styles.accountWrapper}>
-                                <Text style={styles.accountName}>{accountName}</Text>
-                                <Text style={styles.accountNumber}>(ID: {accountNumber})</Text>
+                        <View style={{display: "flex", flexDirection: "row", justifyContent: "space-between", gap: 10}}>
+                            <View style={{display: "flex", gap: 10}}>
+                                <Text style={{color: '#fff', fontSize: 20}}>{accountName}</Text>
+                                <Text style={{fontSize: 14, color: "#fefefe", paddingLeft: 10}}>(ID: {accountNumber})</Text>
                             </View>
-                            <View style={styles.walletIconWrapper}>
+                            <View style={{backgroundColor: '#ffffff', borderRadius: 70, height: 70, width: 70, alignItems: "center", justifyContent: "center"}}>
                                 <Image
                                     source={require('@/assets/images/wallet-transparent.png')}
-                                    style={styles.walletIcon}
+                                    style={{width: 50, height: 50}}
                                 />
                             </View>
                         </View>
-                        <View style={styles.balanceWrapper}>
-                            <View style={{display: 'flex', flexDirection: 'row', alignItems: 'baseline', gap: 10}}>
-                                <Text style={styles.currencyText}>{currency}</Text>
-                                <Text style={styles.balanceText}>{showBalance ? balance.toLocaleString() : 'xxxx'}</Text>
+                        <View style={{display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center", gap: 10}}>
+                            <View style={{flex: 1, display: 'flex', flexDirection: 'row', alignItems: 'baseline', gap: 10}}>
+                                <Text style={{fontSize: 16, color: "#ffffff", fontWeight: "bold"}}>{currency}</Text>
+                                <Text style={{fontSize: 28, color: "#ffffff", fontWeight: "semibold", flex: 1}}>{showBalance ? balance.toLocaleString() : 'xxxx'}</Text>
                             </View>
-                            <TouchableOpacity onPress={() => setShowBalance(!showBalance)}>
-                                <Icon name={showBalance ? 'eye-outline' : 'eye-off-outline'} color={'#fafafa'}
-                                      style={{marginRight: 10}}/>
+                            <TouchableOpacity onPress={() => setShowBalance(!showBalance)} style={{marginRight: 15}}>
+                                <Icon 
+                                    name={showBalance ? 'eye-outline' : 'eye-off-outline'} 
+                                    color={'#fafafa'}
+                                    style={{}}
+                                />
                             </TouchableOpacity>
                         </View>
                     </View>
                 </View>
                 <View style={styles.actionButtons}>
                     <View style={styles.actionButtonContainer}>
-                        <View style={styles.actionButtonWrapper}>
+                        <TouchableOpacity onPress={() => handleActionButtonPress('deposit')} style={styles.actionButton}>
                             <Image
                                 source={require('@/assets/images/wallet-deposit.png')}
                                 style={styles.actionButtonImage}
                             />
-                        </View>
+                        </TouchableOpacity>
                         <Text>Deposit</Text>
                     </View>
                     <View style={styles.actionButtonContainer}>
-                        <View style={styles.actionButtonWrapper}>
+                        <TouchableOpacity onPress={() => handleActionButtonPress('liquidate')} style={styles.actionButton}>
                             <Image
                                 source={require('@/assets/images/wallet-liquidation.png')}
                                 style={styles.actionButtonImage}
                             />
-                        </View>
+                        </TouchableOpacity>
                         <Text>Liquidate</Text>
                     </View>
                     <View style={styles.actionButtonContainer}>
-                        <View style={styles.actionButtonWrapper}>
+                        <TouchableOpacity onPress={() => handleActionButtonPress('transfer')} style={styles.actionButton}>
                             <Image
                                 source={require('@/assets/images/wallet-transfers.png')}
                                 style={styles.actionButtonImage}
                             />
-                        </View>
+                        </TouchableOpacity>
                         <Text>Transfer</Text>
                     </View>
                 </View>
-                <View style={styles.transactionHistoryContainer}>
-                    <Text style={styles.transactionHistoryTitle}>Transactions History</Text>
-                    <FlatList
-                        data={transactions}
-                        renderItem={({item}) => <Transaction transaction={item}/>}
-                        keyExtractor={item => item.id}
-                        showsVerticalScrollIndicator={true}
-                    />
+                <View style={{top: 165, paddingHorizontal: 10, display: "flex", gap: 10}}>
+                    <Text style={{fontSize: 22, fontWeight: "600"}}>Transactions History</Text>
+                    <View style={{height: "58%", width: "100%", overflow: "hidden"}}>
+                        <FlatList
+                            data={transactions}
+                            renderItem={({item}) => <Transaction transaction={item}/>}
+                            keyExtractor={item => item.id}
+                            contentContainerStyle={{
+                                flexGrow: 1
+                            }}
+                        />
+                    </View>
                 </View>
             </View>
         </SafeAreaView>
@@ -192,79 +205,29 @@ const styles = StyleSheet.create({
         marginLeft: 10,
         marginBottom: 10
     },
-    accountContainer: {
-        flex: 1,
-        display: "flex",
-        flexDirection: "row",
-        justifyContent: "space-between",
-        gap: 10,
-    },
-    accountName: {
-        color: '#fff',
-        fontSize: 24
-    },
-    accountNumber: {
-        fontSize: 16,
-        color: "#fefefe",
-        paddingLeft: 10
-    },
-    walletIconWrapper: {
-        backgroundColor: '#ffffff',
-        borderRadius: 70,
-        alignItems: "center",
-        justifyContent: "center",
-        height: 70,
-        width: 70,
-    },
-    walletIcon: {
-        width: 50,
-        height: 50
-    },
-    accountWrapper: {
-        display: "flex",
-        gap: 10,
-    },
-    balanceWrapper: {
-        display: "flex",
-        flexDirection: "row",
-        gap: 10,
-        alignItems: "center",
-        padding: 10,
-        justifyContent: 'space-between'
-    },
-    currencyText: {
-        fontSize: 16,
-        color: "#ffffff",
-        fontWeight: "bold"
-    },
-    balanceText: {
-        fontSize: 28,
-        color: "#ffffff",
-        fontWeight: "semibold",
-        flex: 1
-    },
     actionButtons: {
         position: "absolute",
         width: "auto",
-        top: 228,
+        top: 215,
         left: 0,
         right: 0,
-        marginHorizontal: 10,
+        marginHorizontal: 8,
         borderRadius: 10,
         backgroundColor: "#ffffff",
         display: "flex",
         flexDirection: "row",
         paddingVertical: 20,
-        paddingHorizontal: 25,
+        paddingHorizontal: 15,
         alignItems: "center",
         justifyContent: "space-between",
-        gap: 10,
+        gap: 8,
     },
     actionButtonContainer: {
         alignItems: "center",
-        gap: 15
+        gap: 15,
+        display: "flex"
     },
-    actionButtonWrapper: {
+    actionButton: {
         height: 105,
         borderRadius: 5,
         backgroundColor: "#e7e7e7",
@@ -277,16 +240,5 @@ const styles = StyleSheet.create({
         height: 88,
         width: 88,
         color: "#536353",
-    },
-    
-    transactionHistoryContainer: {
-        top: 165,
-        paddingHorizontal: 10,
-        display: "flex",
-        gap: 10
-    },
-    transactionHistoryTitle: {
-        fontSize: 26,
-        fontWeight: "600",
     },
 });
